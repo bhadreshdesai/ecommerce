@@ -1,12 +1,20 @@
 plugins {
-	id 'org.springframework.boot' version '2.7.1'
+	id "com.github.spacialcircumstances.gradle-cucumber-reporting" version "0.1.24"
+	id 'idea'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'java'
+	id 'org.springframework.boot' version '2.7.1'
 }
 
 group = 'bdd.demo'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
+
+def versions = [
+		openapi: '1.5.10',
+		cucumber: '7.4.1',
+		jjwt: '0.9.1'
+]
 
 configurations {
 	compileOnly {
@@ -18,24 +26,61 @@ repositories {
 	mavenCentral()
 }
 
+sourceSets {
+	testInt {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+idea {
+	module {
+		testSourceDirs += project.sourceSets.testInt.java.srcDirs
+		testSourceDirs += project.sourceSets.testInt.resources.srcDirs
+	}
+}
+
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	annotationProcessor 'org.projectlombok:lombok'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
 	runtimeOnly 'com.h2database:h2'
-	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	testImplementation(platform("io.cucumber:cucumber-bom:7.4.1"))
-	testImplementation("io.cucumber:cucumber-java")
-	testImplementation("io.cucumber:cucumber-junit-platform-engine")
-	testImplementation("org.junit.platform:junit-platform-suite")
-	testImplementation("org.junit.jupiter:junit-jupiter")
+	testIntImplementation(platform("io.cucumber:cucumber-bom:${versions.cucumber}"))
+	testIntImplementation("io.cucumber:cucumber-java")
+	testIntImplementation("io.cucumber:cucumber-junit-platform-engine")
+	testIntImplementation("org.junit.platform:junit-platform-suite")
+	testIntImplementation("org.junit.jupiter:junit-jupiter")
 
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
-	systemProperty("cucumber.junit-platform.naming-strategy", "long")
+}
+
+task testInt(type: Test) {
+	description = 'Runs integration tests.'
+	group = 'verification'
+	outputs.upToDateWhen { false }
+	testClassesDirs = sourceSets.testInt.output.classesDirs
+	classpath = sourceSets.testInt.runtimeClasspath
+	useJUnitPlatform()
+	//systemProperty("cucumber.junit-platform.naming-strategy", "long")
+	//shouldRunAfter test
+	//testLogging {
+	//	events "passed", "skipped", "failed"
+	//}
+	//testLogging.showStandardStreams = true
+}
+
+cucumberReports {
+	buildId = '0'
+	outputDir = file("${buildDir}/reports/cucumber")
+	reports = files("${buildDir}/reports/cucumber/cucumber-report.json")
 }
