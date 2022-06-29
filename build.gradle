@@ -52,6 +52,9 @@ dependencies {
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	testIntAnnotationProcessor 'org.projectlombok:lombok'
+	testIntCompileOnly 'org.projectlombok:lombok'
+	testIntImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testIntImplementation(platform("io.cucumber:cucumber-bom:${versions.cucumber}"))
 	testIntImplementation("io.cucumber:cucumber-java")
 	testIntImplementation("io.cucumber:cucumber-junit-platform-engine")
