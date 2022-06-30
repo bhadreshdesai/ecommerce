@@ -81,19 +81,25 @@ tasks.named('test') {
 task testInt(type: Test) {
 	description = 'Runs integration tests.'
 	group = 'verification'
+	// Always run integration test
 	outputs.upToDateWhen { false }
 	testClassesDirs = sourceSets.testInt.output.classesDirs
 	classpath = sourceSets.testInt.runtimeClasspath
 	useJUnitPlatform()
-	//shouldRunAfter test
-	//testLogging {
-	//	events "passed", "skipped", "failed"
-	//}
-	//testLogging.showStandardStreams = true
+	shouldRunAfter test
+	// Need the following to show the output when running from the console
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+	testLogging.showStandardStreams = true
 }
 
 cucumberReports {
 	buildId = '0'
 	outputDir = file("${buildDir}/reports/cucumber")
 	reports = files("${buildDir}/reports/cucumber/cucumber-report.json")
+}
+
+check.configure {
+	dependsOn testInt
 }
