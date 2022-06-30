@@ -16,12 +16,6 @@ def versions = [
 		jjwt: '0.9.1'
 ]
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
 repositories {
 	mavenCentral()
 }
@@ -37,6 +31,22 @@ idea {
 	module {
 		testSourceDirs += project.sourceSets.testInt.java.srcDirs
 		testSourceDirs += project.sourceSets.testInt.resources.srcDirs
+	}
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+
+	// Need this to start @SpringBootTest
+	testIntImplementation {
+		extendsFrom implementation
+	}
+
+	// Need this to start @SpringBootTest
+	testIntRuntimeOnly {
+		extendsFrom runtimeOnly
 	}
 }
 
@@ -58,6 +68,7 @@ dependencies {
 	testIntImplementation(platform("io.cucumber:cucumber-bom:${versions.cucumber}"))
 	testIntImplementation("io.cucumber:cucumber-java")
 	testIntImplementation("io.cucumber:cucumber-junit-platform-engine")
+	testIntImplementation("io.cucumber:cucumber-spring")
 	testIntImplementation("org.junit.platform:junit-platform-suite")
 	testIntImplementation("org.junit.jupiter:junit-jupiter")
 
@@ -74,7 +85,6 @@ task testInt(type: Test) {
 	testClassesDirs = sourceSets.testInt.output.classesDirs
 	classpath = sourceSets.testInt.runtimeClasspath
 	useJUnitPlatform()
-	//systemProperty("cucumber.junit-platform.naming-strategy", "long")
 	//shouldRunAfter test
 	//testLogging {
 	//	events "passed", "skipped", "failed"

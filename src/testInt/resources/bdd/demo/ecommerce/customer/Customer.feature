@@ -15,7 +15,7 @@ Feature: Customer
     When I send a POST request to "/api/customer"
     Then I get a response code of 201
 
-    Examples:
+    Examples: Example customers
     | firstName | lastName | dateOfBirth | gender |
     | John      | Doe      | 1971-03-31  | M      |
     | Jane      | Doe      | 1971-04-01  | F      |
