@@ -2,6 +2,7 @@ plugins {
 	id "com.github.spacialcircumstances.gradle-cucumber-reporting" version "0.1.24"
 	id 'idea'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'jacoco'
 	id 'java'
 	id 'org.springframework.boot' version '2.7.1'
 }
@@ -74,10 +75,6 @@ dependencies {
 
 }
 
-tasks.named('test') {
-	useJUnitPlatform()
-}
-
 task testInt(type: Test) {
 	description = 'Runs integration tests.'
 	group = 'verification'
@@ -85,13 +82,14 @@ task testInt(type: Test) {
 	outputs.upToDateWhen { false }
 	testClassesDirs = sourceSets.testInt.output.classesDirs
 	classpath = sourceSets.testInt.runtimeClasspath
-	useJUnitPlatform()
 	shouldRunAfter test
-	// Need the following to show the output when running from the console
-	testLogging {
-		events "passed", "skipped", "failed"
-	}
-	testLogging.showStandardStreams = true
+}
+
+check.configure {
+	// check task depends on testInt and jacocoTestCoverageVerification
+	// when you run ./gradlew check testInt and jacocoTestCoverageVerification tasks are also run
+	dependsOn testInt
+	dependsOn jacocoTestCoverageVerification
 }
 
 cucumberReports {
@@ -100,6 +98,52 @@ cucumberReports {
 	reports = files("${buildDir}/reports/cucumber/cucumber-report.json")
 }
 
-check.configure {
+jacocoTestCoverageVerification {
 	dependsOn testInt
+	executionData {
+		tasks.withType(Test).findAll {
+			it.jacoco.destinationFile.exists()
+		}*.jacoco.destinationFile
+	}
+	violationRules {
+		rule {
+			element = 'CLASS'
+			excludes = [
+					'bdd.demo.ecommerce.EcommerceApplication',	         // ignore the main application
+					'bdd.*.Constants',	                                 // ignore all the constant files
+					'bdd.demo.ecommerce.customer.CustomerController'	 // ignore for now. TODO: implement test for the controller
+			]
+			limit {
+				counter = 'INSTRUCTION'
+				value = 'COVEREDRATIO'
+				minimum = 0.95
+			}
+		}
+	}
+}
+
+jacocoTestReport {
+	// https://stackoverflow.com/questions/19025138/gradle-how-to-generate-coverage-report-for-integration-test-using-jacoco
+	executionData {
+		tasks.withType(Test).findAll {
+			it.jacoco.destinationFile.exists()
+		}*.jacoco.destinationFile
+	}
+
+	reports {
+		xml.required = true
+		// HTML report: build/reports/jacoco/test/html/index.html
+		html.required = true
+	}
+}
+
+tasks.withType(Test) {
+	useJUnitPlatform()
+
+	// Need the following to show the output when running from the console
+	testLogging {
+		events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
+	}
+	testLogging.showStandardStreams = false
+	finalizedBy jacocoTestReport // report is always generated after tests run
 }
