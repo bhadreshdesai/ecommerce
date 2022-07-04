@@ -1,3 +1,5 @@
+[![Build](https://github.com/bhadreshdesai/ecommerce/actions/workflows/gradle.yml/badge.svg)](https://github.com/bhadreshdesai/ecommerce/actions/workflows/gradle.yml)
+
 ## References
 
 ### Cucumber
