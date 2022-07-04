@@ -1,15 +1,14 @@
 package bdd.demo.ecommerce.customer;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
 
 import static bdd.demo.ecommerce.customer.Constants.APIPATH_CUSTOMERS;
 
@@ -18,16 +17,34 @@ import static bdd.demo.ecommerce.customer.Constants.APIPATH_CUSTOMERS;
 @Slf4j
 public class CustomerController {
 
+    @Autowired CustomerService customerService;
+
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Customer> create(@RequestBody Customer customer, UriComponentsBuilder uriComponentsBuilder) {
-        Long id = 1L;
         log.info("Received customer: {}", customer.toString());
-        customer.setId(id);
+        customer = customerService.create(customer);
         final URI uri = uriComponentsBuilder.path(APIPATH_CUSTOMERS + "/{id}")
-                .build(id);
+                .build(customer.getId());
         return ResponseEntity.created(uri)
-                //.build()
                 .body(customer)
                 ;
+    }
+
+    @GetMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Customer> getById(@PathVariable("id") Long id) {
+        Optional<Customer> customer = customerService.getById(id);
+        return ResponseEntity.of(customer);
+    }
+
+    @PutMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Customer> updateCustomer(@PathVariable("id") Long id, @RequestBody Customer customer) {
+        customer = customerService.update(id, customer);
+        return ResponseEntity.ok(customer);
+    }
+
+    @DeleteMapping(path = "/{id}", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Customer> deleteCustomer(@PathVariable("id") Long id) {
+        customerService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
