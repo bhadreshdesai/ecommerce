@@ -18,4 +18,5 @@ public class ScenarioState {
     private RequestSpecification requestSpecification;
     private Response response;
     private String payload;
+    private String requestPath;
 }
