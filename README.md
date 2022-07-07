@@ -1,6 +1,8 @@
+[![Build](https://github.com/bhadreshdesai/ecommerce/actions/workflows/gradle.yml/badge.svg)](https://github.com/bhadreshdesai/ecommerce/actions/workflows/gradle.yml)
+
 ## References
 
-###Springboot 2.6.4, Cucumber 7.2.3, junit5
+### Springboot 2.6.4, Cucumber 7.2.3, junit5
 
 [Selenium Spring Boot Cucumber Junit 5 Test Automation Project](https://www.swtestacademy.com/selenium-spring-boot-cucumber-junit5-project/)
 
