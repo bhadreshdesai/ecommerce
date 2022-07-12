@@ -12,9 +12,7 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 def versions = [
-		openapi: '1.5.10',
-		cucumber: '7.4.1',
-		jjwt: '0.9.1'
+		cucumber: '7.4.1'
 ]
 
 repositories {
@@ -22,6 +20,7 @@ repositories {
 }
 
 sourceSets {
+	// Create separate integration test source sets
 	testInt {
 		compileClasspath += sourceSets.main.output
 		runtimeClasspath += sourceSets.main.output
@@ -49,6 +48,11 @@ configurations {
 	testIntRuntimeOnly {
 		extendsFrom runtimeOnly
 	}
+
+	// h2 server configuration
+	h2 {
+		extendsFrom runtimeOnly
+	}
 }
 
 dependencies {
@@ -61,20 +65,56 @@ dependencies {
 
 	runtimeOnly 'com.h2database:h2'
 
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
+	// Integration test dependencies
 	testIntAnnotationProcessor 'org.projectlombok:lombok'
 	testIntCompileOnly 'org.projectlombok:lombok'
 	testIntImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testIntImplementation(platform("io.cucumber:cucumber-bom:${versions.cucumber}"))
-	testIntImplementation("io.cucumber:cucumber-java")
-	testIntImplementation("io.cucumber:cucumber-junit-platform-engine")
-	testIntImplementation("io.cucumber:cucumber-spring")
-	testIntImplementation("org.junit.platform:junit-platform-suite")
-	testIntImplementation("org.junit.jupiter:junit-jupiter")
 
+	// Cucumber dependencies
+	testIntImplementation platform("io.cucumber:cucumber-bom:${versions.cucumber}")
+	testIntImplementation "io.cucumber:cucumber-java"
+	testIntImplementation "io.cucumber:cucumber-junit-platform-engine"
+	testIntImplementation "io.cucumber:cucumber-spring"
+
+	// rest-assured version managed by spring boot
+	testIntImplementation "io.rest-assured:rest-assured"
+
+	// Need junit-platform-suite to run cucumber tests. see RunCucumberTest
+	testIntImplementation "org.junit.platform:junit-platform-suite"
 }
 
+// Use ant task to start the database so the execution is not blocked
+tasks.register('startDB') {
+	description = 'Test classpath'
+	group = 'application'
+	doLast {
+		println "Classpath: ${configurations.h2.asPath}"
+		ant.java(classname: 'org.h2.tools.Server', classpath: configurations.h2.asPath, fork: false, spawn: false, outputproperty: 'op') {
+			arg(value: '-tcp')
+			arg(value: '-baseDir')
+			arg(value: "${project.projectDir}/db")
+			// arg(value: '-ifExists') // Connect to existing databases only. Database will not be created if it does not exist
+			arg(value: '-ifNotExists') // Allow database creation
+			arg(value: '-web')
+			arg(value: '-tcpPassword')
+			arg(value: 'sa')
+		}
+		println ant.properties.op
+	}
+}
+
+task stopDB(type: JavaExec) {
+	description = 'Stop H2 databse server'
+	group = 'application'
+	classpath = configurations.h2
+	mainClass = 'org.h2.tools.Server'
+	args = ['-tcpShutdown', 'tcp://localhost', '-tcpPassword', 'sa']
+}
+
+// Run integration test
 task testInt(type: Test) {
 	description = 'Runs integration tests.'
 	group = 'verification'
@@ -82,6 +122,7 @@ task testInt(type: Test) {
 	outputs.upToDateWhen { false }
 	testClassesDirs = sourceSets.testInt.output.classesDirs
 	classpath = sourceSets.testInt.runtimeClasspath
+	// Run integration test after running the unit tests
 	shouldRunAfter test
 }
 
