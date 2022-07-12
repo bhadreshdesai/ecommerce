@@ -2,11 +2,13 @@ package bdd.demo.ecommerce.customer;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.persistence.EntityNotFoundException;
 import java.net.URI;
 import java.util.Optional;
 
@@ -46,5 +48,12 @@ public class CustomerController {
     public ResponseEntity<Customer> deleteCustomer(@PathVariable("id") Long id) {
         customerService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @ExceptionHandler(value = EntityNotFoundException.class)
+    public ResponseEntity<Object> handleIllegalArgumentException(EntityNotFoundException ex) {
+        //log.info("Handled: IllegalArgumentException", ex);
+        //return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

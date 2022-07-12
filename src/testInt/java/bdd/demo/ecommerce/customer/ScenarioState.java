@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+
 import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 
 @Getter
@@ -19,4 +21,5 @@ public class ScenarioState {
     private Response response;
     private String payload;
     private String requestPath;
+    private HashMap<String, Long> mapIdRefs= new HashMap<>();
 }
