@@ -12,7 +12,8 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
 def versions = [
-		cucumber: '7.4.1'
+		cucumber: '7.4.1',
+		openapi: '1.6.9'
 ]
 
 repositories {
@@ -63,8 +64,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	runtimeOnly 'com.h2database:h2'
+	implementation "org.springdoc:springdoc-openapi-ui:${versions.openapi}"
 
+	runtimeOnly 'com.h2database:h2'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
@@ -151,8 +153,8 @@ jacocoTestCoverageVerification {
 			element = 'CLASS'
 			excludes = [
 					'bdd.demo.ecommerce.EcommerceApplication',	         // ignore the main application
-					'bdd.*.Constants',	                                 // ignore all the constant files
-					'bdd.demo.ecommerce.customer.CustomerController'	 // ignore for now. TODO: implement test for the controller
+					'bdd.demo.ecommerce.configuration.OpenApiConfig',	 // ignore api specification generation class
+					'bdd.*.Constants'	                                 // ignore all the constant files
 			]
 			limit {
 				counter = 'INSTRUCTION'
