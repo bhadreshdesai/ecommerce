@@ -13,7 +13,7 @@ sourceCompatibility = '11'
 
 def versions = [
 		cucumber: '7.8.1',
-		openapi: '1.6.9'
+		openapi: '1.6.12'
 ]
 
 repositories {
