@@ -11,10 +11,21 @@ group = 'bdd.demo'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
+// version of the dependencies
 def versions = [
 		cucumber: '7.8.1',
 		openapi: '1.6.12'
 ]
+
+// jacoco exclusions
+// Provide the list of classes to be excluded for jacoco verification
+// Use ant glob pattern to exclude classes
+def jacocoExclusions = [
+		'bdd/demo/ecommerce/EcommerceApplication.class',	         // ignore the main application
+		'bdd/demo/ecommerce/configuration/OpenApiConfig.class',	 	 // ignore api specification generation class
+		'bdd/**/Constants.class'	                                 // ignore all the constant files
+]
+def excludeFromJacocoTestReport = false	                     // set this to true to exclude the classes from code coverage report also
 
 repositories {
 	mavenCentral()
@@ -143,19 +154,25 @@ cucumberReports {
 
 jacocoTestCoverageVerification {
 	dependsOn testInt
+
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it,
+					exclude: jacocoExclusions
+			)
+		}))
+	}
+
 	executionData {
 		tasks.withType(Test).findAll {
 			it.jacoco.destinationFile.exists()
 		}*.jacoco.destinationFile
 	}
+
 	violationRules {
 		rule {
 			element = 'CLASS'
-			excludes = [
-					'bdd.demo.ecommerce.EcommerceApplication',	         // ignore the main application
-					'bdd.demo.ecommerce.configuration.OpenApiConfig',	 // ignore api specification generation class
-					'bdd.*.Constants'	                                 // ignore all the constant files
-			]
+			excludes = jacocoExclusions
 			limit {
 				counter = 'INSTRUCTION'
 				value = 'COVEREDRATIO'
@@ -166,6 +183,16 @@ jacocoTestCoverageVerification {
 }
 
 jacocoTestReport {
+	afterEvaluate {
+		if (excludeFromJacocoTestReport) {
+			classDirectories.setFrom(files(classDirectories.files.collect {
+				fileTree(dir: it,
+						exclude: jacocoExclusions
+				)
+			}))
+		}
+	}
+
 	// https://stackoverflow.com/questions/19025138/gradle-how-to-generate-coverage-report-for-integration-test-using-jacoco
 	executionData {
 		tasks.withType(Test).findAll {
