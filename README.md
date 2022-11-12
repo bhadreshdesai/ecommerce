@@ -1,6 +1,13 @@
 [![Build](https://github.com/bhadreshdesai/ecommerce/actions/workflows/gradle.yml/badge.svg)](https://github.com/bhadreshdesai/ecommerce/actions/workflows/gradle.yml)
 
+## ToDo
+- [ ] Implement product service using mongodb
+
 ## References
+
+### Microservices
+[Spring Boot Microservices Project Example - Part 1 | Building Services](https://www.youtube.com/watch?v=lh1oQHXVSc0)
+[spring-boot-microservices-new github](https://github.com/SaiUpadhyayula/spring-boot-microservices-new)
 
 ### Cucumber
 #### Springboot 2.6.4, Cucumber 7.2.3, junit5

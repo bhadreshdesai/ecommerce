@@ -1,0 +1,52 @@
+app:
+  description: ecommerce application
+  version: v1.0.0
+
+logging:
+  level:
+    org:
+      hibernate:
+        stat: debug
+        type: trace
+server:
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: ecommerce
+  data:
+    # Mongodb configuration
+    mongodb:
+      database: product-service
+      host: localhost
+      port: 27017
+  datasource:
+    # https://stackoverflow.com/questions/37903105/how-to-configure-spring-boot-to-use-file-based-h2-database
+    #spring.datasource.url=jdbc:h2:file:./db/EcommerceDB
+    #jdbc:h2:file:~/EcommerceDB;IFEXISTS=TRUE
+    #spring.datasource.url=jdbc:h2:mem:EcommerceDB
+    url: jdbc:h2:tcp://localhost/EcommerceDB
+    driverClassName: org.h2.Driver
+    username: sa
+    password: sa
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      # create database schema from SQL files
+      # https://github.com/hibernate/hibernate-orm/blob/master/hibernate-core/src/main/java/org/hibernate/cfg/AvailableSettings.java
+      # create, create-drop, validate, and update
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+        generate_statistics: false
+    show-sql: false
+  main:
+    banner-mode: OFF
+  output:
+    ansi:
+      enabled: ALWAYS
