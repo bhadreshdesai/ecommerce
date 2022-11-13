@@ -1,0 +1,82 @@
+version: "3"
+services:
+  #---------------------------------------
+  # mysql database container
+  #---------------------------------------
+  mysqldb:
+    # Set max_allowed_packet to 100M (or any other value)
+    command: --max_allowed_packet=104857600 --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    container_name: ${COMPOSE_PROJECT_NAME}_mysqldb
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
+    image: "mysql:5.7"
+    networks:
+      - net
+    ports:
+      - ${PORT_MYSQL}:3306
+    restart: "no"
+    volumes:
+      - mysqldb_data:/var/lib/mysql
+      - ./init_mysql:/docker-entrypoint-initdb.d
+
+  #---------------------------------------
+  # phpmyadmin container
+  #---------------------------------------
+  phpmyadmin:
+    container_name: ${COMPOSE_PROJECT_NAME}_phpmyadmin
+    depends_on:
+      - mysqldb
+    environment:
+      PMA_HOST: ${MYSQLDB_HOST}
+      PMA_USER: ${MYSQLDB_ROOT_USER}
+      PMA_PASSWORD: ${MYSQLDB_ROOT_PASSWORD}
+    image: phpmyadmin:5.2
+    networks:
+      - net
+    ports:
+      - "${PORT_PHPADMIN}:80"
+    restart: "no"
+
+  #---------------------------------------
+  # mongodb container
+  #---------------------------------------
+  mongodb:
+    container_name: ${COMPOSE_PROJECT_NAME}_mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD}
+    image: mongo:4.2
+    networks:
+      - net
+    ports:
+      - ${PORT_MONGODB}:27017
+    restart: "no"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_data:/data/configdb
+
+  #---------------------------------------
+  # mongodb container
+  #---------------------------------------
+  mongo-express:
+    container_name: ${COMPOSE_PROJECT_NAME}_mongo-express
+    depends_on:
+      - mongodb
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGODB_ROOT_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_ROOT_PASSWORD}
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGODB_ROOT_USER}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGODB_ROOT_PASSWORD}
+      ME_CONFIG_MONGODB_URL: mongodb://${MONGODB_ROOT_USER}:${MONGODB_ROOT_PASSWORD}@${MONGODB_HOST}:27017/
+    image: mongo-express:1.0.0-alpha
+    networks:
+      - net
+    ports:
+      - ${PORT_MONGO_EXPRESS}:8081
+    restart: always
+
+networks:
+  net:
+volumes:
+  mysqldb_data:
+  mongodb_data:

@@ -17,24 +17,24 @@ spring:
   data:
     # Mongodb configuration
     mongodb:
-      database: product-service
+      authenticationDatabase: admin
+      database: product_db
       host: localhost
       port: 27017
+      username: root
+      password: root_password
   datasource:
-    # https://stackoverflow.com/questions/37903105/how-to-configure-spring-boot-to-use-file-based-h2-database
-    #spring.datasource.url=jdbc:h2:file:./db/EcommerceDB
-    #jdbc:h2:file:~/EcommerceDB;IFEXISTS=TRUE
-    #spring.datasource.url=jdbc:h2:mem:EcommerceDB
-    url: jdbc:h2:tcp://localhost/EcommerceDB
-    driverClassName: org.h2.Driver
-    username: sa
-    password: sa
+    # jdbc:mysql://${MYSQL_HOST:localhost}:3306/db_example
+    url: jdbc:mysql://localhost:3306/customer_db
+    driverClassName: com.mysql.cj.jdbc.Driver
+    username: root
+    password: root_password
   h2:
     console:
-      enabled: true
+      enabled: false
       path: /h2-console
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
+    #database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       # create database schema from SQL files
       # https://github.com/hibernate/hibernate-orm/blob/master/hibernate-core/src/main/java/org/hibernate/cfg/AvailableSettings.java

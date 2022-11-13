@@ -1,7 +1,30 @@
 [![Build](https://github.com/bhadreshdesai/ecommerce/actions/workflows/gradle.yml/badge.svg)](https://github.com/bhadreshdesai/ecommerce/actions/workflows/gradle.yml)
 
+## Setup
+```shell
+# Clone repository
+git clone https://github.com/bhadreshdesai/ecommerce.git
+
+# Start mysql and mongodb docker
+cd ecommerce/docker
+docker-compose up -d
+
+# Build the project
+cd ..
+./gradlew clean build
+
+# Run the project
+./gradlew bootRun
+```
+
+phpMyadmin url http://localhost:8001/
+
+mongo-express url http://localhost:8002/
+
+
+
 ## ToDo
-- [ ] Implement product service using mongodb
+- [ ] Write integration test for product server [Youtube Int Test](https://www.youtube.com/watch?v=lh1oQHXVSc0&t=1404s)
 
 ## References
 
