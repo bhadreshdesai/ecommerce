@@ -29,10 +29,6 @@ spring:
     driverClassName: com.mysql.cj.jdbc.Driver
     username: root
     password: root_password
-  h2:
-    console:
-      enabled: false
-      path: /h2-console
   jpa:
     #database-platform: org.hibernate.dialect.H2Dialect
     hibernate:

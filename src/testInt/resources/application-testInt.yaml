@@ -6,12 +6,3 @@ logging:
     # Enable debug logging for our application packages
     bdd.demo: DEBUG
     root: ERROR
-
-spring:
-  datasource:
-    url: jdbc:h2:mem:EcommerceDBTest
-    driverClassName: org.h2.Driver
-    username: sa
-    password: sa
-  jpa:
-    database-platform: org.hibernate.dialect.H2Dialect

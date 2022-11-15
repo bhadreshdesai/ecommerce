@@ -22,9 +22,10 @@ def versions = [
 // Provide the list of classes to be excluded for jacoco verification
 // Use ant glob pattern to exclude classes
 def jacocoExclusions = [
-		'bdd/demo/ecommerce/EcommerceApplication.class',	         // ignore the main application
-		'bdd/demo/ecommerce/configuration/OpenApiConfig.class',	 	 // ignore api specification generation class
-		'bdd/**/Constants.class'	                                 // ignore all the constant files
+		'bdd/demo/ecommerce/EcommerceApplication.class'	             // ignore the main application
+		,'bdd/demo/ecommerce/configuration/OpenApiConfig.class'	 	 // ignore api specification generation class
+		,'bdd/**/Constants.class'	                                 // ignore all the constant files
+		,'bdd/demo/ecommerce/product/**/*.class'	                     // ignore product package for now
 ]
 def excludeFromJacocoTestReport = false	                     // set this to true to exclude the classes from code coverage report also
 
@@ -61,11 +62,6 @@ configurations {
 	testIntRuntimeOnly {
 		extendsFrom runtimeOnly
 	}
-
-	// h2 server configuration
-	h2 {
-		extendsFrom runtimeOnly
-	}
 }
 
 dependencies {
@@ -79,15 +75,27 @@ dependencies {
 
 	implementation "org.springdoc:springdoc-openapi-ui:${versions.openapi}"
 
-	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java'
 
+	testAnnotationProcessor 'org.projectlombok:lombok'
+	testCompileOnly 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	// test containers
+	testImplementation platform("org.testcontainers:testcontainers-bom:${versions.testcontainers}") //import bom
+	testImplementation "org.testcontainers:junit-jupiter"
+	testImplementation "org.testcontainers:mongodb"
+	testImplementation "org.testcontainers:mysql"
 
 	// Integration test dependencies
 	testIntAnnotationProcessor 'org.projectlombok:lombok'
 	testIntCompileOnly 'org.projectlombok:lombok'
 	testIntImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// test containers for testInt
+	testIntImplementation platform("org.testcontainers:testcontainers-bom:${versions.testcontainers}") //import bom
+	testIntImplementation "org.testcontainers:junit-jupiter"
+	testIntImplementation "org.testcontainers:mongodb"
+	testIntImplementation "org.testcontainers:mysql"
 
 	// Cucumber dependencies
 	testIntImplementation platform("io.cucumber:cucumber-bom:${versions.cucumber}")
@@ -95,46 +103,11 @@ dependencies {
 	testIntImplementation "io.cucumber:cucumber-junit-platform-engine"
 	testIntImplementation "io.cucumber:cucumber-spring"
 
-	// test containers
-	implementation platform("org.testcontainers:testcontainers-bom:${versions.testcontainers}") //import bom
-	testImplementation "org.testcontainers:junit-jupiter"
-	testImplementation "org.testcontainers:mongodb"
-	//testImplementation("org.testcontainers:mysql")
-
-
 	// rest-assured version managed by spring boot
 	testIntImplementation "io.rest-assured:rest-assured"
 
 	// Need junit-platform-suite to run cucumber tests. see RunCucumberTest
 	testIntImplementation "org.junit.platform:junit-platform-suite"
-}
-
-// Use ant task to start the database so the execution is not blocked
-tasks.register('startDB') {
-	description = 'Test classpath'
-	group = 'application'
-	doLast {
-		println "Classpath: ${configurations.h2.asPath}"
-		ant.java(classname: 'org.h2.tools.Server', classpath: configurations.h2.asPath, fork: false, spawn: false, outputproperty: 'op') {
-			arg(value: '-tcp')
-			arg(value: '-baseDir')
-			arg(value: "${project.projectDir}/db")
-			// arg(value: '-ifExists') // Connect to existing databases only. Database will not be created if it does not exist
-			arg(value: '-ifNotExists') // Allow database creation
-			arg(value: '-web')
-			arg(value: '-tcpPassword')
-			arg(value: 'sa')
-		}
-		println ant.properties.op
-	}
-}
-
-task stopDB(type: JavaExec) {
-	description = 'Stop H2 databse server'
-	group = 'application'
-	classpath = configurations.h2
-	mainClass = 'org.h2.tools.Server'
-	args = ['-tcpShutdown', 'tcp://localhost', '-tcpPassword', 'sa']
 }
 
 // Run integration test
