@@ -1,8 +1,8 @@
 package bdd.demo.ecommerce.customer;
 
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import bdd.demo.ecommerce.base.BaseEntity;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,14 +10,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.LocalDate;
 
+@AllArgsConstructor
 @Entity
 @Getter
+@NoArgsConstructor
 @Setter
-@ToString
-public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+@SuperBuilder
+public class Customer extends BaseEntity<Long> {
+
     private String firstName;
     private String lastName;
     LocalDate dateOfBirth;

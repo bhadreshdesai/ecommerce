@@ -1,19 +1,16 @@
 package bdd.demo.ecommerce.product;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import bdd.demo.ecommerce.base.BaseService;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-@RequiredArgsConstructor
-@Slf4j
-public class ProductService {
+public class ProductService extends BaseService<Product, String, ProductRepository> {
+}
+/*
 
     private final ProductRepository productRepository;
 
-    public void createProduct(ProductRequest productRequest) {
+    public ProductResponse createProduct(ProductRequest productRequest) {
         Product product = Product.builder()
                 .name(productRequest.getName())
                 .description(productRequest.getDescription())
@@ -22,6 +19,7 @@ public class ProductService {
 
         productRepository.save(product);
         log.info("Product {} is saved", product.getId());
+        return mapToProductResponse(product);
     }
 
     public List<ProductResponse> getAllProducts() {
@@ -38,3 +36,4 @@ public class ProductService {
                 .build();
     }
 }
+ */

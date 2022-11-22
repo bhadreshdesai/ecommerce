@@ -1,23 +1,21 @@
 package bdd.demo.ecommerce.product;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import bdd.demo.ecommerce.base.BaseEntity;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.persistence.Entity;
 import java.math.BigDecimal;
 
-@Document(value = "product")
 @AllArgsConstructor
+@Document(value = "product")
+@Getter
 @NoArgsConstructor
-@Builder
-@Data
-public class Product {
-
-    @Id
-    private String id;
+@Setter
+@SuperBuilder
+public class Product extends BaseEntity<String> {
     private String name;
     private String description;
     private BigDecimal price;

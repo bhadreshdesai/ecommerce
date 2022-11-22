@@ -6,7 +6,7 @@ Feature: Customer
     Given a base URL of "http://localhost" with random port
 
   Scenario Outline: Create customer <firstName> <lastName>
-    Given a customer payload of
+    Given a payload of
     """
     {
       "firstName": "<firstName>",
@@ -17,7 +17,7 @@ Feature: Customer
     """
     When I send a POST request to "/api/customers"
     Then I get a response code of 201
-    And a location header with customer id
+    And a location header with id
     And body contains "firstName" as "<firstName>"
     And body contains "lastName" as "<lastName>"
     And body contains "dateOfBirth" as "<dateOfBirth>"
@@ -32,7 +32,7 @@ Feature: Customer
     Given I have the following customers in the system
       | firstName | lastName | dateOfBirth | gender | idRef  |
       | Update    | Customer | 1971-03-31  | M      | idref1 |
-    And a customer payload of
+    And a payload of
       """
       {
         "firstName": "<firstName>",
@@ -56,14 +56,14 @@ Feature: Customer
     Given I have the following customers in the system
       | firstName | lastName | dateOfBirth | gender | idRef  |
       | Delete    | Customer | 1971-04-01  | F      | idref2 |
-    When I send a DELETE request to "/api/customers" with id of "idref2"
+    When I send a DELETE request to "/api/customers" with id ref of "idref2"
     Then I get a response code of 204
 
   Scenario: Get a customer
     Given I have the following customers in the system
       | firstName | lastName | dateOfBirth | gender | idRef  |
       | Get       | Customer | 1971-04-01  | F      | idref3 |
-    When I send a GET request to "/api/customers" with id of "idref3"
+    When I send a GET request to "/api/customers" with id ref of "idref3"
     Then I get a response code of 200
     And body contains "firstName" as "Get"
     And body contains "lastName" as "Customer"
@@ -72,7 +72,7 @@ Feature: Customer
 
   Scenario: Try to update a non-existent customer
     #Given a customer with id "999" does not exist in the system
-    Given a customer payload of
+    Given a payload of
       """
       {
         "firstName": "Nonexistant",
@@ -81,5 +81,9 @@ Feature: Customer
         "gender": "F"
       }
       """
-    When I send a PUT request to "/api/customers" with id ref of "999"
+    When I send a PUT request to "/api/customers" with id of "999"
+    Then I get a response code of 404
+
+  Scenario: Try to get a non-existent customer
+    When I send a GET request to "/api/customers" with id of "999"
     Then I get a response code of 404

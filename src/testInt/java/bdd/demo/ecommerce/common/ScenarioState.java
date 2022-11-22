@@ -1,4 +1,4 @@
-package bdd.demo.ecommerce.customer;
+package bdd.demo.ecommerce.common;
 
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -15,7 +15,7 @@ import static io.cucumber.spring.CucumberTestContext.SCOPE_CUCUMBER_GLUE;
 @Setter
 @Component
 @Scope(SCOPE_CUCUMBER_GLUE)
-// You can use state bean so it can be shared by steps defined in different files
+// You can use state bean, so it can be shared by steps defined in different files
 public class ScenarioState {
     private RequestSpecification requestSpecification;
     private Response response;
