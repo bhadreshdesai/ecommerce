@@ -20,6 +20,7 @@ public class BaseService<E extends BaseEntity<ID>, ID, R extends PagingAndSortin
 
     @Transactional
     public E update(ID id, E entity) {
+        // Merge update https://www.baeldung.com/spring-data-partial-update
         Optional<E> existingEntity = repository.findById(id);
         if(!existingEntity.isPresent()) {
             throw new EntityNotFoundException();

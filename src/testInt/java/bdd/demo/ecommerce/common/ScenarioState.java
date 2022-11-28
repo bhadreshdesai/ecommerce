@@ -21,5 +21,5 @@ public class ScenarioState {
     private Response response;
     private String payload;
     private String requestPath;
-    private HashMap<String, Long> mapIdRefs= new HashMap<>();
+    private HashMap<String, String> mapIdRefs= new HashMap<>();
 }

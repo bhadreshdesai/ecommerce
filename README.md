@@ -17,10 +17,17 @@ cd ..
 ./gradlew bootRun
 ```
 
-phpMyadmin url http://localhost:8001/
+[phpMyadmin](http://localhost:8001/)
 
-mongo-express url http://localhost:8002/
+[mongo-express](http://localhost:8002/)
 
+[actuator](http://localhost:8080/actuator)
+
+[mappings](http://localhost:8080/actuator/mappings)
+
+[swagger](http://localhost:8080/swagger-ui.html)
+
+[api-docs](http://localhost:8080/v3/api-docs)
 
 
 ## ToDo

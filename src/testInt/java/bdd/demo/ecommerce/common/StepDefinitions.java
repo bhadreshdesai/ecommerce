@@ -6,17 +6,21 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.config.JsonPathConfig;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import lombok.extern.slf4j.Slf4j;
+import org.hamcrest.number.BigDecimalCloseTo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.web.server.LocalServerPort;
 
+import java.math.BigDecimal;
 import java.text.MessageFormat;
 
-import static io.restassured.RestAssured.get;
 import static io.restassured.RestAssured.given;
+import static io.restassured.config.JsonConfig.jsonConfig;
+import static io.restassured.config.RestAssuredConfig.newConfig;
 import static org.hamcrest.CoreMatchers.endsWith;
 import static org.hamcrest.CoreMatchers.equalTo;
 
@@ -38,6 +42,8 @@ public class StepDefinitions {
         log.info("Setting the base url to {}", baseUri);
         RestAssured.baseURI = baseUri;
         RestAssured.port = port;
+        // Need this for the BigDecimal comparison to work
+        RestAssured.config = newConfig().jsonConfig(jsonConfig().numberReturnType(JsonPathConfig.NumberReturnType.BIG_DECIMAL));
     }
 
     @Given("a payload of")
@@ -68,11 +74,11 @@ public class StepDefinitions {
         //state.getMapIdRefs().forEach((k, v) -> log.info((k + ":" + v)));
 
         // Pass in a string id ref for e.g. idRef1 which will exist in the map or pass in actual id should be numeric
-        Long id = state.getMapIdRefs().get(idRef);
-        if (id == null) id = Long.valueOf(idRef);
+        String id = state.getMapIdRefs().get(idRef);
+        if (id == null) id = idRef;
         log.info("id from map: {}", id);
 
-        iSendAPUTRequestToWithIdOf(putUrl, String.valueOf(id));
+        iSendAPUTRequestToWithIdOf(putUrl, id);
     }
 
     @When("I send a PUT request to {string} with id of {string}")
@@ -84,12 +90,13 @@ public class StepDefinitions {
         state.setResponse(response);
         log.info("PUT request path: {}", putUrl);
         log.info("PUT request payload: {}, {}", state.toString(), state.getPayload());
+        log.info("PUT response: {}", response);
     }
 
     @When("I send a DELETE request to {string} with id ref of {string}")
     public void iSendADELETERequestToWithIdRefOf(String deleteUrl, String idRef) {
         // TODO: validate incoming idRef
-        Long id = state.getMapIdRefs().get(idRef);
+        String id = state.getMapIdRefs().get(idRef);
         deleteUrl = MessageFormat.format("{0}/{1}",deleteUrl, id);
         log.info("DELETE request path: {}", deleteUrl);
         Response response = given()
@@ -102,9 +109,9 @@ public class StepDefinitions {
     public void iSendAGETRequestToWithIdRefOf(String getUrl, String idRef) {
         // TODO: validate incoming idRef
         // Pass in a string id ref for e.g. idRef1 which will exist in the map or pass in actual id should be numeric
-        Long id = state.getMapIdRefs().get(idRef);
-        if (id == null) id = Long.valueOf(idRef);
-        iSendAGETRequestToWithIdOf(getUrl, String.valueOf(id));
+        String id = state.getMapIdRefs().get(idRef);
+        if (id == null) id = idRef;
+        iSendAGETRequestToWithIdOf(getUrl, id);
     }
 
     @When("I send a GET request to {string} with id of {string}")
@@ -147,4 +154,15 @@ public class StepDefinitions {
                 .assertThat()
                 .body(attribute, equalTo(value));
     }
+
+    @And("^body contains (\\w+) as (\\d+.\\d+)$")
+    public void bodyContainsAttributeValueAs(String attribute, BigDecimal expectedValue) {
+        log.info("attribute: {}, value: {}", attribute, expectedValue);
+        log.info("Response: {}", state.getResponse().prettyPrint());
+        state.getResponse()
+                .then()
+                .assertThat()
+                .body(attribute, BigDecimalCloseTo.closeTo(expectedValue, BigDecimal.valueOf(0.001)));
+    }
+
 }

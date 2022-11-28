@@ -25,7 +25,6 @@ def jacocoExclusions = [
 		'bdd/demo/ecommerce/EcommerceApplication.class'	             // ignore the main application
 		,'bdd/demo/ecommerce/configuration/OpenApiConfig.class'	 	 // ignore api specification generation class
 		,'bdd/**/Constants.class'	                                 // ignore all the constant files
-		,'bdd/demo/ecommerce/product/**/*.class'	                     // ignore product package for now
 ]
 def excludeFromJacocoTestReport = false	                     // set this to true to exclude the classes from code coverage report also
 
@@ -69,6 +68,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-web'

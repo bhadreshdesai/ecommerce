@@ -3,10 +3,8 @@ package bdd.demo.ecommerce.product;
 import bdd.demo.ecommerce.base.BaseEntity;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Entity;
 import java.math.BigDecimal;
 
 @AllArgsConstructor

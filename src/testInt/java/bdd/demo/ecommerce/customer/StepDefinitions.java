@@ -71,7 +71,7 @@ public class StepDefinitions {
                         .getLong("id");
         //@formatter:on
         log.info("idRef: {}/{}", idRef, id);
-        state.getMapIdRefs().put(idRef, id);
+        state.getMapIdRefs().put(idRef, String.valueOf(id));
     }
 
     @And("I have the following customers in the system")

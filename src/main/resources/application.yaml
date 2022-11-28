@@ -8,6 +8,12 @@ logging:
       hibernate:
         # stat: debug
         # type: trace
+management:
+  endpoints:
+    web:
+      exposure:
+        include: mappings
+
 server:
   forward-headers-strategy: framework
 
