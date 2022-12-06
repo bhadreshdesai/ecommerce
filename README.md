@@ -57,5 +57,8 @@ cd ..
 #### REST API Testing With Cucumber Using BDD Approach
 [REST API Testing With Cucumber Using BDD Approach](https://www.softwaretestinghelp.com/rest-api-testing-with-bdd-cucumber/)
 
-### RestAssured
+#### RestAssured
 [Integration Testing of SpringBoot using RestAssured](https://qaautomation.expert/2021/07/26/integration-testing-of-springboot-using-restassured/)
+
+#### Transaction handling
+[Distributed transaction boundaries and microservices](https://medium.com/@pradeep_thomas/distributed-transaction-boundaries-and-microservices-8905aef82efe#:~:text=Transactional%20boundaries%20guarantee%20that%20transactions,is%20in%20a%20consistent%20state.)
