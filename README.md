@@ -31,7 +31,7 @@ cd ..
 
 
 ## ToDo
-- [x] Write integration test for product server [Youtube Int Test](https://youtu.be/lh1oQHXVSc0?t=3455)
+- [x] Write integration test for product server [Youtube Int Test](https://youtu.be/lh1oQHXVSc0?t=3984)
 - [x] [Cucumber & Testcontainer: a BDD perfect match](https://medium.com/javarevisited/cucumber-testcontainer-a-bdd-perfect-match-956cf62cdf47) - [Github](https://github.com/fpaparoni/bddfun/blob/main/project/src/test/java/com/javastaff/bddfun/test/glue/SpringBootTestLoader.java)
 - [x] Implement order service
 - [ ] Use Request and Response in Service instead of model

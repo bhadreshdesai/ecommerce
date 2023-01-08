@@ -22,9 +22,11 @@ def versions = [
 // Provide the list of classes to be excluded for jacoco verification
 // Use ant glob pattern to exclude classes
 def jacocoExclusions = [
-		'bdd/demo/ecommerce/EcommerceApplication.class'	             // ignore the main application
-		,'bdd/demo/ecommerce/configuration/OpenApiConfig.class'	 	 // ignore api specification generation class
-		,'bdd/**/Constants.class'	                                 // ignore all the constant files
+		'bdd/demo/ecommerce/EcommerceApplication.class'                 // ignore the main application
+		,'bdd/demo/ecommerce/configuration/OpenApiConfig.class'         // ignore api specification generation class
+		,'bdd/**/Constants.class'                                       // ignore all the constant files
+		,'bdd/demo/ecommerce/utils/CustomPhysicalNamingStrategy.class'  // ignore hibernate naming strategy classes
+		,'bdd/demo/ecommerce/utils/PrefixPhysicalNamingStrategy.class'  // ignore hibernate naming strategy classes
 ]
 def excludeFromJacocoTestReport = false	                     // set this to true to exclude the classes from code coverage report also
 
