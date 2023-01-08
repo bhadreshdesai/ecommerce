@@ -15,7 +15,7 @@ import java.net.URI;
 import java.util.Optional;
 
 @Slf4j
-public class BaseController<E extends BaseEntity<ID>, ID, R extends PagingAndSortingRepository<E, ID>> implements BaseApi<E, ID, R> {
+public class BaseController<E extends BaseEntity<ID>, ID, R extends PagingAndSortingRepository<E, ID>> implements BaseApi<E, ID> {
     @Autowired
     private BaseService<E, ID, R> service;
 
