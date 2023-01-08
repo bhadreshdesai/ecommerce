@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 public interface BaseApi<E extends BaseEntity<ID>, ID, R extends PagingAndSortingRepository<E, ID>> {
+    @Operation(summary = "Create entity")
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE}, produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<E> create(@RequestBody E entity, HttpServletRequest request);
 

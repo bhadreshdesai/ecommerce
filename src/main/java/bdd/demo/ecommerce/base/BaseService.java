@@ -10,7 +10,7 @@ import java.util.Optional;
 
 public class BaseService<E extends BaseEntity<ID>, ID, R extends PagingAndSortingRepository<E, ID>> {
     @Autowired
-    private R repository;
+    protected R repository;
 
     @Transactional
     public ID create(E entity) {

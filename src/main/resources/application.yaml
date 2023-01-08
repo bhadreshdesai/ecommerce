@@ -42,11 +42,13 @@ spring:
       # https://github.com/hibernate/hibernate-orm/blob/master/hibernate-core/src/main/java/org/hibernate/cfg/AvailableSettings.java
       # create, create-drop, validate, and update
       ddl-auto: update
+      naming:
+        physical-strategy: bdd.demo.ecommerce.utils.CustomPhysicalNamingStrategy
     properties:
       hibernate:
         format_sql: true
         generate_statistics: false
-    show-sql: false
+    show-sql: true
   main:
     banner-mode: OFF
   output:

@@ -3,7 +3,6 @@ package bdd.demo.ecommerce.base;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +17,11 @@ import java.util.Optional;
 @Slf4j
 public class BaseController<E extends BaseEntity<ID>, ID, R extends PagingAndSortingRepository<E, ID>> implements BaseApi<E, ID, R> {
     @Autowired
-    BaseService<E, ID, R> service;
+    private BaseService<E, ID, R> service;
+
+    protected BaseService<E, ID, R> getService() {
+        return this.service;
+    }
 
     @Override
     public ResponseEntity<E> create(@RequestBody E entity, HttpServletRequest request) {
