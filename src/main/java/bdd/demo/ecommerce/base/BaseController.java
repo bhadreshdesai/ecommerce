@@ -17,11 +17,7 @@ import java.util.Optional;
 @Slf4j
 public class BaseController<E extends BaseEntity<ID>, ID, R extends PagingAndSortingRepository<E, ID>> implements BaseApi<E, ID> {
     @Autowired
-    private BaseService<E, ID, R> service;
-
-    protected BaseService<E, ID, R> getService() {
-        return this.service;
-    }
+    protected BaseService<E, ID, R> service;
 
     @Override
     public ResponseEntity<E> create(@RequestBody E entity, HttpServletRequest request) {

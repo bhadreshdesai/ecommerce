@@ -30,6 +30,19 @@ public class StepDefinitions {
     @Value("${spring.datasource.url}")
     private String databaseUrl;
 
+    @And("I have the following products in the system")
+    public void iHaveTheFollowingProductsInTheSystem(DataTable dataTable) throws JsonProcessingException {
+        log.info("Executing iHaveTheFollowingProductsInTheSystem");
+        List<Map<String, String>> products = dataTable.asMaps();
+        for (Map<String, String> product : products) {
+            String name = product.get("name");
+            String description = product.get("description");
+            BigDecimal price = new BigDecimal(product.get("price"));
+            String idRef = product.get("idRef");
+            createProduct(name, description, price, idRef);
+        }
+    }
+
     private void createProduct(String name, String description, BigDecimal price, String idRef) throws JsonProcessingException {
         // TODO: Find better way to create the json payload
         /*
@@ -51,11 +64,12 @@ public class StepDefinitions {
 
         //String payload = javax.json.Json
         //@formatter:off
+        final String POST_API_PATH = "/api/products";
         String id = given()
                     .contentType(ContentType.JSON)
                     .body(payload)
                 .when()
-                    .post("/api/products")
+                    .post(POST_API_PATH)
                 .then()
                     .extract()
                         .jsonPath()
@@ -63,18 +77,5 @@ public class StepDefinitions {
         //@formatter:on
         log.info("idRef: {}/{}", idRef, id);
         state.getMapIdRefs().put(idRef, id);
-    }
-
-    @And("I have the following products in the system")
-    public void iHaveTheFollowingProductsInTheSystem(DataTable dataTable) throws JsonProcessingException {
-        log.info("Executing iHaveTheFollowingProductsInTheSystem");
-        List<Map<String, String>> products = dataTable.asMaps();
-        for (Map<String, String> product : products) {
-            String name = product.get("name");
-            String description = product.get("description");
-            BigDecimal price = new BigDecimal(product.get("price"));
-            String idRef = product.get("idRef");
-            createProduct(name, description, price, idRef);
-        }
     }
 }

@@ -15,12 +15,12 @@ import static bdd.demo.ecommerce.order.Constants.*;
 @Tag(name = ORDER_TAG, description = ORDER_API_DESC)
 public class OrderController extends BaseController<Order, Long, OrderRepository> implements OrderApi {
 
-   private OrderService getOrderService() {
-      return (OrderService) this.getService();
+   private OrderService getService() {
+      return (OrderService) this.service;
    }
 
    public String placeOrder(@RequestBody OrderRequest orderRequest) {
-      this.getOrderService().placeOrder(orderRequest);
+      this.getService().placeOrder(orderRequest);
       return "Order placed successfully";
    }
 }

@@ -2,11 +2,13 @@ package bdd.demo.ecommerce.order;
 
 import bdd.demo.ecommerce.base.BaseService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class OrderService extends BaseService<Order, Long, OrderRepository> {
    public void placeOrder(OrderRequest orderRequest) {
       Order order = new Order();
