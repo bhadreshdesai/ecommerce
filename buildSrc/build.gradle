@@ -3,9 +3,16 @@ plugins {
 }
 
 repositories {
+    gradlePluginPortal()
     mavenCentral()
 }
 
+def versions = [
+        cucumberReporting: '0.1.25',
+        springBoot: '2.7.5'
+]
+
 dependencies {
-    implementation 'org.springframework.boot:spring-boot-gradle-plugin:2.7.5'
+    implementation "com.github.spacialcircumstances:gradle-cucumber-reporting:${versions.cucumberReporting}"
+    implementation "org.springframework.boot:spring-boot-gradle-plugin:${versions.springBoot}"
 }

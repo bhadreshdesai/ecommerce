@@ -26,6 +26,9 @@ cd ..
 [mongo-express](http://localhost:8002/)
 
 ### Customer Service
+[cucumber](customer-service/build/reports/cucumber/cucumber-html-reports/overview-features.html)
+
+[jacoco](customer-service/build/reports/jacoco/test/html/index.html)
 
 [actuator](http://localhost:8081/actuator)
 
@@ -36,6 +39,10 @@ cd ..
 [api-docs](http://localhost:8081/v3/api-docs)
 
 ### Product Service
+[cucumber](product-service/build/reports/cucumber/cucumber-html-reports/overview-features.html)
+
+[jacoco](product-service/build/reports/jacoco/test/html/index.html)
+
 [actuator](http://localhost:8082/actuator)
 
 [mappings](http://localhost:8082/actuator/mappings)

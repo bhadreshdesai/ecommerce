@@ -1,6 +1,5 @@
 plugins {
     id 'bdd.demo.ecommerce.spring-boot-conventions'
-    id "com.github.spacialcircumstances.gradle-cucumber-reporting" version "0.1.25"
 }
 
 group = 'bdd.demo.ecommerce'
@@ -18,10 +17,4 @@ config.jacocoExclusions = [
 dependencies {
     implementation project(':base-service')
     runtimeOnly 'mysql:mysql-connector-java'
-}
-
-cucumberReports {
-    buildId = '0'
-    outputDir = file("${buildDir}/reports/cucumber")
-    reports = files("${buildDir}/reports/cucumber/cucumber-report.json")
 }
