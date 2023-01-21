@@ -1,0 +1,27 @@
+plugins {
+    id 'bdd.demo.ecommerce.spring-boot-conventions'
+    id "com.github.spacialcircumstances.gradle-cucumber-reporting" version "0.1.25"
+}
+
+group = 'bdd.demo.ecommerce'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = JavaVersion.VERSION_17
+
+// jacoco exclusions
+// Provide the list of classes to be excluded for jacoco verification
+// Use ant glob pattern to exclude classes
+config.jacocoExclusions = [
+            'bdd/demo/ecommerce/ProductServiceApplication.class'             // ignore the main application
+            , 'bdd/**/Constants.class'                                       // ignore all the constant files
+    ]
+
+dependencies {
+    implementation project(':base-service')
+    runtimeOnly 'mysql:mysql-connector-java'
+}
+
+cucumberReports {
+    buildId = '0'
+    outputDir = file("${buildDir}/reports/cucumber")
+    reports = files("${buildDir}/reports/cucumber/cucumber-report.json")
+}

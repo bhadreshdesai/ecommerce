@@ -1,3 +1,5 @@
+[Customer Service OpenAPI Docs](http://localhost:8081/swagger-ui/index.html)
+
 [![Build](https://github.com/bhadreshdesai/ecommerce/actions/workflows/gradle.yml/badge.svg)](https://github.com/bhadreshdesai/ecommerce/actions/workflows/gradle.yml)
 
 ## Setup
@@ -17,17 +19,30 @@ cd ..
 ./gradlew bootRun
 ```
 
+### Tools
+
 [phpMyadmin](http://localhost:8001/)
 
 [mongo-express](http://localhost:8002/)
 
-[actuator](http://localhost:8080/actuator)
+### Customer Service
 
-[mappings](http://localhost:8080/actuator/mappings)
+[actuator](http://localhost:8081/actuator)
 
-[swagger](http://localhost:8080/swagger-ui.html)
+[mappings](http://localhost:8081/actuator/mappings)
 
-[api-docs](http://localhost:8080/v3/api-docs)
+[swagger](http://localhost:8081/swagger-ui.html)
+
+[api-docs](http://localhost:8081/v3/api-docs)
+
+### Product Service
+[actuator](http://localhost:8082/actuator)
+
+[mappings](http://localhost:8082/actuator/mappings)
+
+[swagger](http://localhost:8082/swagger-çui.html)
+
+[api-docs](http://localhost:8082/v3/api-docs)
 
 
 ## ToDo
@@ -39,6 +54,7 @@ cd ..
 ## References
 
 ### Microservices
+[Spring Boot Microservices Full Course](https://www.youtube.com/watch?v=lh1oQHXVSc0&list=PLSVW22jAG8pBnhAdq9S8BpLnZ0_jVBj0c)
 [Spring Boot Microservices Project Example - Part 1 | Building Services](https://www.youtube.com/watch?v=lh1oQHXVSc0)
 [spring-boot-microservices-new github](https://github.com/SaiUpadhyayula/spring-boot-microservices-new)
 

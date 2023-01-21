@@ -1,0 +1,192 @@
+plugins {
+    id 'idea'
+    id 'jacoco'
+    id 'java'
+    id 'org.springframework.boot'
+}
+
+// version of the dependencies
+def versions = [
+        cucumber: '7.8.1',
+        openapi: '1.6.12',
+        testcontainers: '1.17.5'
+]
+
+interface SpringBootConventionPluginExtension {
+    ListProperty<String> getJacocoExclusions()
+}
+
+def config = project.extensions.create('config', SpringBootConventionPluginExtension)
+
+
+def excludeFromJacocoTestReport = false	                        // set this to true to exclude the classes from code coverage report also
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    // Create separate integration test source sets
+    testInt {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+idea {
+    module {
+        testSourceDirs += project.sourceSets.testInt.java.srcDirs
+        testSourceDirs += project.sourceSets.testInt.resources.srcDirs
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+
+    // Need this to start @SpringBootTest
+    testIntImplementation {
+        extendsFrom implementation
+    }
+
+    // Need this to start @SpringBootTest
+    testIntRuntimeOnly {
+        extendsFrom runtimeOnly
+    }
+}
+
+dependencies {
+
+    annotationProcessor platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+    implementation platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    implementation "org.springdoc:springdoc-openapi-ui:${versions.openapi}"
+
+    testAnnotationProcessor platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // test containers
+    testImplementation platform("org.testcontainers:testcontainers-bom:${versions.testcontainers}") //import bom
+    testImplementation "org.testcontainers:junit-jupiter"
+    testImplementation "org.testcontainers:mysql"
+
+
+    testIntAnnotationProcessor platform(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+    // Integration test dependencies
+    testIntAnnotationProcessor 'org.projectlombok:lombok'
+    testIntCompileOnly 'org.projectlombok:lombok'
+    testIntImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // test containers for testInt
+    testIntImplementation platform("org.testcontainers:testcontainers-bom:${versions.testcontainers}") //import bom
+    testIntImplementation "org.testcontainers:junit-jupiter"
+    testIntImplementation "org.testcontainers:mysql"
+
+    // Cucumber dependencies
+    testIntImplementation platform("io.cucumber:cucumber-bom:${versions.cucumber}")
+    testIntImplementation "io.cucumber:cucumber-java"
+    testIntImplementation "io.cucumber:cucumber-junit-platform-engine"
+    testIntImplementation "io.cucumber:cucumber-spring"
+
+    // rest-assured version managed by spring boot
+    testIntImplementation "io.rest-assured:rest-assured"
+
+    // Need junit-platform-suite to run cucumber tests. see RunCucumberTest
+    testIntImplementation "org.junit.platform:junit-platform-suite"
+
+}
+
+// Run integration test
+task testInt(type: Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+    // Always run integration test
+    outputs.upToDateWhen { false }
+    testClassesDirs = sourceSets.testInt.output.classesDirs
+    classpath = sourceSets.testInt.runtimeClasspath
+    // Run integration test after running the unit tests
+    shouldRunAfter test
+}
+
+check.configure {
+    // check task depends on testInt and jacocoTestCoverageVerification
+    // when you run ./gradlew check testInt and jacocoTestCoverageVerification tasks are also run
+    dependsOn testInt
+    dependsOn jacocoTestCoverageVerification
+}
+
+jacocoTestCoverageVerification {
+    dependsOn testInt
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it,
+                    exclude: config.jacocoExclusions.get()
+            )
+        }))
+    }
+
+    executionData {
+        tasks.withType(Test).findAll {
+            it.jacoco.destinationFile.exists()
+        }*.jacoco.destinationFile
+    }
+
+    violationRules {
+        rule {
+            element = 'CLASS'
+            excludes = config.jacocoExclusions.get()
+            limit {
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 0.95
+            }
+        }
+    }
+}
+
+jacocoTestReport {
+    afterEvaluate {
+        if (excludeFromJacocoTestReport) {
+            classDirectories.setFrom(files(classDirectories.files.collect {
+                fileTree(dir: it,
+                        exclude: config.jacocoExclusions.get()
+                )
+            }))
+        }
+    }
+
+    // https://stackoverflow.com/questions/19025138/gradle-how-to-generate-coverage-report-for-integration-test-using-jacoco
+    executionData {
+        tasks.withType(Test).findAll {
+            it.jacoco.destinationFile.exists()
+        }*.jacoco.destinationFile
+    }
+
+    reports {
+        xml.required = true
+        // HTML report: build/reports/jacoco/test/html/index.html
+        html.required = true
+    }
+}
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+
+    // Need the following to show the output when running from the console
+    testLogging {
+        events "PASSED", "SKIPPED", "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
+    }
+    testLogging.showStandardStreams = false
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}

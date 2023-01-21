@@ -1,0 +1,8 @@
+# Disable logging
+# create logback-test.xml to disable org.springframework for logs generated before the application is loaded
+# Disable all logs
+logging:
+  level:
+    # Enable debug logging for our application packages
+    bdd.demo: DEBUG
+    root: ERROR
